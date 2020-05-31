@@ -37,6 +37,19 @@ namespace GPK.ThirdLab.Services
             GraphWriter = graphWriter;
         }
 
+        public void CheckIsGraphDictyledonous(object sender, EventArgs e)
+        {
+            try
+            {
+                bool isDicotyledonous = Graph.IsDicotyledonousGraph();
+                Console.WriteLine($"{nameof(isDicotyledonous)}:\t{isDicotyledonous}");
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
 
         public void GraphInput(object sender, EventArgs e)
         {

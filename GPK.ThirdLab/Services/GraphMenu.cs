@@ -14,6 +14,7 @@ namespace GPK.ThirdLab.Services
         public event EventHandler DepthFirstSearch;
         public event EventHandler InputFromFile;
         public event EventHandler OutputInFile;
+        public event EventHandler IsGraphDictyledonous;
 
         public GraphMenu()
         {
@@ -28,8 +29,8 @@ namespace GPK.ThirdLab.Services
             DepthFirstSearch += facade.DepthFirstSearch;
             InputFromFile += facade.InputFromFile;
             OutputInFile += facade.OutputInFile;
+            IsGraphDictyledonous += facade.CheckIsGraphDictyledonous;
         }
-
 
         public void Menu()
         {
@@ -45,7 +46,8 @@ namespace GPK.ThirdLab.Services
                     $"\t5.DepthFirstSearch\n" +
                     $"\t6.InputFromFile\n" +
                     $"\t7.OutputInFile\n" +
-                    $"\t8.Exit\n");
+                    $"\t8.IsGraphDictyledonous\n" +
+                    $"\t9.Exit\n");
 
                 var keyInfo = Console.ReadKey();
 
@@ -82,12 +84,17 @@ namespace GPK.ThirdLab.Services
                         break;
 
                     case ConsoleKey.D8:
+                        IsGraphDictyledonous.Invoke(this, EventArgs.Empty);
+                        break;
+
+                    case ConsoleKey.D9:
                         exit = true;
                         break;
 
                 }
 
                 Console.ReadKey();
+                
                 Console.Clear();
             }
         }

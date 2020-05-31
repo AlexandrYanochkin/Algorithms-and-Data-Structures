@@ -77,7 +77,6 @@ namespace GPK.ThirdLab.Models
             }
         }
 
-
         public bool DepthFirstSearch(int startVertex, int endVertex)
         {
             ValidateVertex(startVertex);
@@ -136,6 +135,46 @@ namespace GPK.ThirdLab.Models
             return result;
         }
 
+        public bool IsDicotyledonousGraph()
+        {        
+            int startVertex = 0;
+            var graph = GetGraphForSearch(_ribs);
+            bool isGraphDicotyledonous = true;
+            SetType typeOfVertex = SetType.VertexFromFirstSet;
+            Queue<int> queue = new Queue<int>();
+
+            queue.Enqueue(startVertex);
+            graph[startVertex].SetType = typeOfVertex;
+            typeOfVertex = GetNextSetType(typeOfVertex);
+            
+
+            while (queue.Count != 0 && isGraphDicotyledonous)
+            {
+                int currentVertex = queue.Dequeue();
+               
+                for (int i = 0;i < CountOfVertices && isGraphDicotyledonous; i++)
+                {
+                    if(graph[currentVertex].Ribs[i].Exist && !graph[i].IsVisited)
+                    {
+                        if (graph[i].SetType == SetType.None)
+                            graph[i].SetType = typeOfVertex;
+                        else if (graph[currentVertex].SetType == graph[i].SetType)
+                            isGraphDicotyledonous = false;
+
+                        queue.Enqueue(i);
+                    }
+                }
+
+                graph[currentVertex].IsVisited = true;
+                typeOfVertex = GetNextSetType(typeOfVertex);
+            }
+
+            return isGraphDicotyledonous;
+        }
+
+        private SetType GetNextSetType(SetType typeOfVertex) 
+            => (typeOfVertex == SetType.VertexFromFirstSet) ? SetType.VertexFromSecondSet : SetType.VertexFromFirstSet;
+
         private List<Vertex> GetGraphForSearch(Rib[,] ribs)
         {
             List<Vertex> graph = new List<Vertex>();
@@ -155,6 +194,8 @@ namespace GPK.ThirdLab.Models
             public List<Rib> Ribs { get; set; }
             public bool IsVisited { get; set; }
 
+            public SetType SetType { get; set; }
+
             public Vertex(List<Rib> ribs,bool isVisited)
             {
                 Ribs = ribs;
@@ -167,6 +208,13 @@ namespace GPK.ThirdLab.Models
                 IsVisited = false;
             }
 
+        }
+
+        private enum SetType
+        {
+            None,
+            VertexFromFirstSet,
+            VertexFromSecondSet
         }
 
     }
