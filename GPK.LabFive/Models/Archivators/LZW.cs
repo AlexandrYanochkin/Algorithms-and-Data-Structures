@@ -6,10 +6,10 @@ using System.Text;
 
 namespace GPK.LabFive.Models.Archivators
 {
-    public class LWZ : IArchivator
+    public class LZW : IArchivator
     {
         private List<char> GetListOfSymbols(string line)
-            => line.Select(t => t).Distinct().ToList();
+            => line.Distinct().ToList();
 
         public string Encode(string line)
         {            
@@ -41,7 +41,6 @@ namespace GPK.LabFive.Models.Archivators
             if (!string.IsNullOrEmpty(fLine))
                 encodedString.Append($"{list.IndexOf(fLine)}");
 
-
             return encodedString.ToString();
         }
 
@@ -49,44 +48,47 @@ namespace GPK.LabFive.Models.Archivators
         {
             var lines = line.Split(Environment.NewLine);
             var alphabet = lines.First().Split(';').ToList();
-            var allText = lines.Last();
+            var allCodes = lines.Last().Split(';')
+                .Select(t => new Pair { Code = int.Parse(t) })
+                .ToList();
+
             StringBuilder decodedString = new StringBuilder();
 
-
-            var allCodes = allText.Split(';')
-                .Select(t => new Pair { Code = int.Parse(t) }).ToList();
-
-            for(int i = 0;i < alphabet.Count; i++)
+            for (int i = 0; i < alphabet.Count; i++)
             {
                 allCodes.Where(t => t.Code == i).ToList()
                     .ForEach(t => t.Value = alphabet[i]);
             }
 
+            int prevCode = allCodes.First().Code;
+            string symb = allCodes.First().Value;
+            decodedString.Append(symb);
 
-            string fLine = string.Empty, sLine = string.Empty, resultLine = string.Empty;
-          
-            for (int i = 0; i < allCodes.Count; i++)
+            for (int i = 1; i < allCodes.Count; i++)
             {
-                sLine = allCodes[i].Value;
-                resultLine = (fLine + sLine);
+                int currCode = allCodes[i].Code;
+                string str = string.Empty;
 
-                if (alphabet.Contains(resultLine))
-                    fLine = resultLine;
+                if (!alphabet.Contains(allCodes.Find(t => t.Code == currCode).Value))
+                {
+                    str = allCodes.Find(t => t.Code == prevCode).Value;
+                    str = (str + symb);
+                }
                 else
                 {
-                    alphabet.Add(resultLine);
-
-                    allCodes.Where(t => t.Code == (alphabet.Count - 1))
-                        .ToList()
-                        .ForEach(t => t.Value = resultLine);
-
-                    fLine = sLine;
+                    str = (allCodes.Find(t => t.Code == currCode).Value);
                 }
-            }
 
-            for (int i = 0; i < allCodes.Count; i++)
-                decodedString.Append(allCodes[i].Value);
-          
+                decodedString.Append(str);
+                symb = str.First().ToString();
+                alphabet.Add(allCodes.Find(t => t.Code == prevCode).Value + symb);
+
+                allCodes.Where(t => t.Code == (alphabet.Count - 1))
+                              .ToList()
+                              .ForEach(t => t.Value = alphabet.Last());
+
+                prevCode = currCode;
+            }
 
             return decodedString.ToString();
         }

@@ -37,6 +37,38 @@ namespace GPK.ThirdLab.Services
             GraphWriter = graphWriter;
         }
 
+        public void ClosedRoadTask(object sender, EventArgs e)
+        {
+            try
+            {
+                Console.WriteLine("Input num of city A and B:");
+                int startVertex = int.Parse(Console.ReadLine());
+                int endVertex = int.Parse(Console.ReadLine());
+
+                Console.WriteLine("Input startOfRoad and endOfRoad:");
+
+                int startOfRoad = int.Parse(Console.ReadLine());
+                int endOfRoad = int.Parse(Console.ReadLine());
+
+                var pathes = Graph.SearchPathes(startVertex, endVertex).ToList();
+
+                bool isRoadBlockPathes = pathes.All(path =>
+                {
+                    int indexOfFirst = path.IndexOf(startOfRoad);
+                    int indexOfLast = path.IndexOf(endOfRoad);
+
+                    return (indexOfFirst != -1 && indexOfLast != -1 && indexOfLast > indexOfFirst);
+                });
+
+                Console.WriteLine(nameof(isRoadBlockPathes) + ":\t" + isRoadBlockPathes);
+
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
         public void CheckIsGraphDictyledonous(object sender, EventArgs e)
         {
             try

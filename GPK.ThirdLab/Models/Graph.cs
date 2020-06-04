@@ -39,7 +39,6 @@ namespace GPK.ThirdLab.Models
                 throw new ArgumentException("Invalid value of Vertex!!!");
         }
 
-
         public IEnumerable<int> Search(int startVertex, int endVertex)
         {
             ValidateVertex(startVertex);
@@ -75,6 +74,19 @@ namespace GPK.ThirdLab.Models
                         Search(graph, i, endVertex, verticesNums, sumForNextStep, ref pathesForOutput);
                     }
             }
+        }
+
+        public IEnumerable<List<int>> SearchPathes(int startVertex, int endVertex)
+        {
+            ValidateVertex(startVertex);
+            ValidateVertex(endVertex);
+            var graph = GetGraphForSearch(Ribs);
+            List<(List<int> verticesNums, int sum)> pathes = new List<(List<int> verticesNums, int sum)>();
+            int currentVertex = startVertex;
+
+            Search(graph, startVertex, endVertex, new List<int>(), 0, ref pathes);
+
+            return pathes.Select(t => t.verticesNums).ToList();
         }
 
         public bool DepthFirstSearch(int startVertex, int endVertex)

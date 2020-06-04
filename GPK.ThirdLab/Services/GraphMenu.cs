@@ -15,6 +15,7 @@ namespace GPK.ThirdLab.Services
         public event EventHandler InputFromFile;
         public event EventHandler OutputInFile;
         public event EventHandler IsGraphDictyledonous;
+        public event EventHandler IsRoadsClosed;
 
         public GraphMenu()
         {
@@ -30,6 +31,7 @@ namespace GPK.ThirdLab.Services
             InputFromFile += facade.InputFromFile;
             OutputInFile += facade.OutputInFile;
             IsGraphDictyledonous += facade.CheckIsGraphDictyledonous;
+            IsRoadsClosed += facade.ClosedRoadTask;
         }
 
         public void Menu()
@@ -47,7 +49,8 @@ namespace GPK.ThirdLab.Services
                     $"\t6.InputFromFile\n" +
                     $"\t7.OutputInFile\n" +
                     $"\t8.IsGraphDictyledonous\n" +
-                    $"\t9.Exit\n");
+                    $"\t9.Close road\n" +
+                    $"\tAnother.Exit\n");
 
                 var keyInfo = Console.ReadKey();
 
@@ -88,6 +91,10 @@ namespace GPK.ThirdLab.Services
                         break;
 
                     case ConsoleKey.D9:
+                        IsRoadsClosed.Invoke(this, EventArgs.Empty);
+                        break;
+
+                    default:
                         exit = true;
                         break;
 
